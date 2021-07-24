@@ -51,6 +51,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class HttpServerHandlerTest {
 
+    // 这就是crlf
     private static String CRLF = "\r\n";
 
     private static String SENTINEL_CHARSET_NAME = SentinelConfig.charset();

@@ -73,6 +73,7 @@ public class HttpHeartbeatSender implements HeartbeatSender {
             consolePort = dashboardList.get(0).getPort();
             RecordLog.info("[NettyHttpHeartbeatSender] Dashboard address parsed: <{}:{}>", consoleHost, consolePort);
         }
+        // 获取http客户端还是https客户端
         this.client = HttpClientsFactory.getHttpClientsByProtocol(consoleProtocol);
     }
 

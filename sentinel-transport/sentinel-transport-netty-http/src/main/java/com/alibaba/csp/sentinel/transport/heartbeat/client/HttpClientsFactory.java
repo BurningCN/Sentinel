@@ -12,11 +12,13 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class HttpClientsFactory {
 
+    // 内部类实现延迟加载的单例
     private static class SslConnectionSocketFactoryInstance {
         private static final SSLConnectionSocketFactory SSL_CONNECTION_SOCKET_FACTORY = new SSLConnectionSocketFactory(SslFactory.getSslConnectionSocketFactory(), NoopHostnameVerifier.INSTANCE);
     }
 
     public static CloseableHttpClient getHttpClientsByProtocol(Protocol protocol) {
+        // http和https
         return protocol == Protocol.HTTP ? HttpClients.createDefault() : HttpClients.custom().
                 setSSLSocketFactory(SslConnectionSocketFactoryInstance.SSL_CONNECTION_SOCKET_FACTORY).build();
     }

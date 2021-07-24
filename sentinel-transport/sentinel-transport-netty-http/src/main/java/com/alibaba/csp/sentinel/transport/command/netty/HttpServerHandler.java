@@ -61,7 +61,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
  *
  * @author Eric Zhao
  */
-public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
+public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final CodecRegistry codecRegistry = new CodecRegistry();
 
@@ -71,17 +71,18 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        FullHttpRequest httpRequest = (FullHttpRequest)msg;
+    protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest httpRequest) throws Exception {
         try {
             CommandRequest request = parseRequest(httpRequest);
             if (StringUtil.isBlank(HttpCommandUtils.getTarget(request))) {
+                // 400
                 writeErrorResponse(BAD_REQUEST.code(), "Invalid command", ctx);
                 return;
             }
             handleRequest(request, ctx, HttpUtil.isKeepAlive(httpRequest));
 
         } catch (Exception ex) {
+            //   500 "Command server error"
             writeErrorResponse(INTERNAL_SERVER_ERROR.code(), SERVER_ERROR_MESSAGE, ctx);
             CommandCenterLog.warn("Internal error", ex);
         }
@@ -166,6 +167,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private CommandRequest parseRequest(FullHttpRequest request) {
+        // localhost:8719/testPath?k1=v1&k2=v2
+        // queryStringDecoder = k1=v1&k2=v2
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.uri());
         CommandRequest serverRequest = new CommandRequest();
         Map<String, List<String>> paramMap = queryStringDecoder.parameters();
@@ -173,16 +176,20 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         if (!paramMap.isEmpty()) {
             for (Entry<String, List<String>> p : paramMap.entrySet()) {
                 if (!p.getValue().isEmpty()) {
+                    // 只取第一个？
                     serverRequest.addParam(p.getKey(), p.getValue().get(0));
                 }
             }
         }
         // Deal with post method, parameter in post has more privilege compared to that in querystring
+        // 处理post方法，post中的参数比querystring中的有更多的权限
         if (request.method().equals(HttpMethod.POST)) {
             // support multi-part and form-urlencoded
+            // 支持 multi-part 和 form-urlencoded
             HttpPostRequestDecoder postRequestDecoder = null;
             try {
                 postRequestDecoder = new HttpPostRequestDecoder(request);
+                // postman的form-data和x-www-form-urlencoded都会进入如下，raw不会进入，raw会走后面的body逻辑
                 for (InterfaceHttpData data : postRequestDecoder.getBodyHttpDatas()) {
                     data.retain(); // must retain each attr before destroy
                     if (data.getHttpDataType() == HttpDataType.Attribute) {
@@ -199,11 +206,12 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
                 }
             } finally {
                 if (postRequestDecoder != null) {
+                    // 和前面retain对应
                     postRequestDecoder.destroy();
                 }
             }
         }
-        // Parse command name.
+        // Parse command name. 获取path值
         String target = parseTarget(queryStringDecoder.rawPath());
         serverRequest.addMetadata(HttpCommandUtils.REQUEST_TARGET, target);
         // Parse body.

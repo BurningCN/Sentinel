@@ -22,7 +22,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 
 /**
  * Command request representation of command center.
- *
+ * 命令中心的命令请求表示。
  * @author Eric Zhao
  */
 public class CommandRequest {

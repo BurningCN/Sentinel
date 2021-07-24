@@ -29,7 +29,7 @@ import com.alibaba.csp.sentinel.transport.CommandCenter;
 
 /**
  * Implementation of {@link CommandCenter} based on Netty HTTP library.
- *
+ *{@link CommandCenter} 基于 Netty HTTP 库的实现。
  * @author Eric Zhao
  */
 @Spi(order = Spi.ORDER_LOWEST - 100)

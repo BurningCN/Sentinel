@@ -23,6 +23,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 
 /**
  * Provides and filters command handlers registered via SPI.
+ * 提供和过滤通过 SPI 注册的命令处理程序。
  *
  * @author Eric Zhao
  */
@@ -56,6 +57,7 @@ public class CommandHandlerProvider implements Iterable<CommandHandler> {
         }
     }
 
+    //  implements Iterable<CommandHandler> 后必须实现的方法
     @Override
     public Iterator<CommandHandler> iterator() {
         return spiLoader.loadInstanceList().iterator();

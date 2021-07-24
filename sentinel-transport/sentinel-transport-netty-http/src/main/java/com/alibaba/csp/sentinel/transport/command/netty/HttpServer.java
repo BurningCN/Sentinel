@@ -38,7 +38,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 @SuppressWarnings("rawtypes")
 public final class HttpServer {
-
+    public static void main(String[] args) throws Exception {
+        new HttpServer().start();;
+    }
     private static final int DEFAULT_PORT = 8719;
 
     private Channel channel;
@@ -51,8 +53,8 @@ public final class HttpServer {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new HttpServerInitializer());
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new HttpServerInitializer());
             int port;
             try {
                 if (StringUtil.isEmpty(TransportConfig.getPort())) {
@@ -65,7 +67,7 @@ public final class HttpServer {
                 // Will cause the application exit.
                 throw new IllegalArgumentException("Illegal port: " + TransportConfig.getPort());
             }
-            
+
             int retryCount = 0;
             ChannelFuture channelFuture = null;
             // loop for an successful binding
@@ -79,21 +81,22 @@ public final class HttpServer {
                 } catch (Exception e) {
                     TimeUnit.MILLISECONDS.sleep(30);
                     RecordLog.warn("[HttpServer] Netty server bind error, port={}, retry={}", newPort, retryCount);
-                    retryCount ++;
+                    retryCount++;
                 }
             }
             channel = channelFuture.channel();
+            // 这行执行后会一直阻塞在这里，直到别处调用channel.close
             channel.closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
     }
-    
+
     /**
      * Increase port number every 3 tries.
-     * 
-     * @param basePort base port to start
+     * 每 3 次尝试增加端口号。
+     * @param basePort   base port to start
      * @param retryCount retry count
      * @return next calculated port
      */

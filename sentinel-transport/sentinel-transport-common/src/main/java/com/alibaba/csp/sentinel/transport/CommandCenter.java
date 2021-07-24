@@ -22,7 +22,9 @@ public interface CommandCenter {
 
     /**
      * Prepare and init for the command center (e.g. register commands).
-     * This will be executed before starting.
+     * This will be executed before starting.、
+     * 为命令中心准备和初始化（例如注册命令）。
+     * 这将在开始之前执行。
      *
      * @throws Exception if error occurs
      */
@@ -30,7 +32,7 @@ public interface CommandCenter {
 
     /**
      * Start the command center in the background.
-     * This method should NOT block.
+     * This method should NOT block. 此方法不应阻塞。
      *
      * @throws Exception if error occurs
      */

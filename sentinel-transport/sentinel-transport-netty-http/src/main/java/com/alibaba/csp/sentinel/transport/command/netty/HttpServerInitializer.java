@@ -31,6 +31,7 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline p = socketChannel.pipeline();
 
+        // http服务器的前三个
         p.addLast(new HttpRequestDecoder());
         p.addLast(new HttpObjectAggregator(1024 * 1024));
         p.addLast(new HttpResponseEncoder());

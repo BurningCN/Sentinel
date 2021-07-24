@@ -27,8 +27,10 @@ import com.alibaba.csp.sentinel.spi.SpiLoader;
  */
 public final class CommandCenterProvider {
 
+    // 目的是为了做缓存
     private static CommandCenter commandCenter = null;
 
+    // 静态块 仅初始化一次
     static {
         resolveInstance();
     }

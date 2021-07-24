@@ -32,7 +32,6 @@ public class StringEncoder implements Encoder<String> {
     }
 
 
-
     @Override
     public byte[] encode(String string, Charset charset) {
         return string.getBytes(charset);

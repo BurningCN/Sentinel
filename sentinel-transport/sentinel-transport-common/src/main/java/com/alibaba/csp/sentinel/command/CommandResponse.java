@@ -25,6 +25,7 @@ public class CommandResponse<R> {
 
     private final boolean success;
     private final R result;
+    // 如果抛异常的话，那么success就是false的
     private final Throwable exception;
 
     private CommandResponse(R result) {

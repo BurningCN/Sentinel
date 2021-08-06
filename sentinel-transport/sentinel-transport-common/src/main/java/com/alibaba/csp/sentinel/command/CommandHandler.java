@@ -17,6 +17,7 @@ package com.alibaba.csp.sentinel.command;
 
 /**
  * Represent a handler that handles a {@link CommandRequest}.
+ * 表示处理 {@link CommandRequest} 的处理程序。
  *
  * @author Eric Zhao
  */
@@ -24,7 +25,7 @@ public interface CommandHandler<R> {
 
     /**
      * Handle the given Courier command request.
-     *
+     * 处理给定的 Courier 命令请求。
      * @param request the request to handle
      * @return the response
      */

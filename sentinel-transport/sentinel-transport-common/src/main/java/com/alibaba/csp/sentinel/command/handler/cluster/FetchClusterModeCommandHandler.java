@@ -34,6 +34,7 @@ public class FetchClusterModeCommandHandler implements CommandHandler<String> {
     @Override
     public CommandResponse<String> handle(CommandRequest request) {
         JSONObject res = new JSONObject()
+                // fluentPut 可链式设置元素 看下源码就知道了，返回的this
             .fluentPut("mode", ClusterStateManager.getMode())
             .fluentPut("lastModified", ClusterStateManager.getLastModified())
             .fluentPut("clientAvailable", isClusterClientSpiAvailable())
